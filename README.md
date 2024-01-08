@@ -2,7 +2,7 @@
 
 i have uploaded the video in drive
 in database its storing vote choic no for false and yes for true
-but in application its only showing yes count bar graph only no count is not plotting,only "no" is not plotting that's the single error 
+but in application its only showing yes count bar graph, "no" is not plotting that's the single error 
 
 
 
