@@ -5,7 +5,8 @@ in database its storing vote choic no for false and yes for true
 but in application its only showing yes count bar graph, "no" is not plotting that's the single error 
 
 
-
+#To run the backend command is
+node server.js
 
 
 
