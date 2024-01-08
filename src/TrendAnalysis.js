@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Line, Bar } from 'react-chartjs-2';
+import { Chart, CategoryScale, LinearScale, Title } from 'chart.js';
+
+Chart.register(CategoryScale, LinearScale, Title);
 
 function TrendAnalysis() {
   const [voteData, setVoteData] = useState([]);
-  const [lineChartData, setLineChartData] = useState([]);
-  const [barChartData, setBarChartData] = useState([]);
+  const [lineChartData, setLineChartData] = useState({});
+  const [barChartData, setBarChartData] = useState({});
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -17,41 +21,50 @@ function TrendAnalysis() {
         const falseVotesResponse = await axios.get('http://localhost:3000/counts?voting_choice=false');
 
         setLineChartData({
-          labels: trueVotesResponse.data.data.map(entry => entry.casted_at),
+          labels: trueVotesResponse.data.data ? trueVotesResponse.data.data.map(entry => entry.casted_at) : [],
           datasets: [
             {
               label: 'True Votes',
               fill: false,
               borderColor: 'rgb(75, 192, 192)',
-              data: trueVotesResponse.data.data.map(entry => entry.count),
+              data: trueVotesResponse.data.data ? trueVotesResponse.data.data.map(entry => entry.count) : [],
             },
             {
               label: 'False Votes',
               fill: false,
               borderColor: 'rgb(255, 99, 132)',
-              data: falseVotesResponse.data.data.map(entry => entry.count),
+              data: falseVotesResponse.data.data ? falseVotesResponse.data.data.map(entry => entry.count) : [],
             },
           ],
         });
 
-        const barGraphResponse = await axios.get('http://localhost:3000/results');
         setBarChartData({
-          labels: barGraphResponse.data.data.map(entry => entry.voting_choice ? 'Yes' : 'No'),
+          labels: ['Yes', 'No'],
           datasets: [
             {
               label: 'Vote Counts',
               backgroundColor: ['rgb(75, 192, 192)', 'rgb(255, 99, 132)'],
-              data: barGraphResponse.data.data.map(entry => entry.count),
+              data: trueVotesResponse.data.data ? trueVotesResponse.data.data.map(entry => entry.count) : [],
             },
           ],
         });
       } catch (error) {
         console.error('Error fetching data:', error);
+        setError(error);
       }
     };
 
     fetchData();
   }, []);
+
+  if (error) {
+    return (
+      <div>
+        <h2>Error</h2>
+        <p>An error occurred while fetching data. Please try again later.</p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -83,12 +96,34 @@ function TrendAnalysis() {
 
       <div>
         <h3>Line Chart</h3>
-        <Line data={lineChartData} />
+        {lineChartData.labels && lineChartData.labels.length > 0 ? (
+          <Line data={lineChartData} />
+        ) : (
+          <p>No data available for the Line Chart</p>
+        )}
       </div>
 
       <div>
         <h3>Bar Graph</h3>
-        <Bar data={barChartData} />
+        {barChartData.labels && barChartData.labels.length > 0 ? (
+          <Bar
+            data={barChartData}
+            options={{
+              scales: {
+                x: {
+                  type: 'category',
+                  labels: ['yes','no'],
+                  beginAtZero: true,
+                },
+                y: {
+                  beginAtZero: true,
+                },
+              },
+            }}
+          />
+        ) : (
+          <p>No data available for the Bar Graph</p>
+        )}
       </div>
     </div>
   );
