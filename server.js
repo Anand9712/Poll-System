@@ -10,11 +10,12 @@ app.use(cors());
 app.use(bodyParser.json());
 
 const pool = new Pool({
-    connectionString: process.env.Database_ur,
-    ssl: {
-      rejectUnauthorized: false,
-    },
-  });
+  user: 'postgres',
+  host: 'localhost',
+  database: 'PollDB',
+  password: '9740',
+  port: 5432,
+});
 
 app.post('/vote', async (req, res) => {
   try {
