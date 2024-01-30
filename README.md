@@ -1,8 +1,4 @@
-[click the link to open video](https://drive.google.com/drive/folders/1sFljtBwblq5wQ6xf7RuV6mxwtA6I6J7Z)
 
-i have uploaded the video in drive
-in database its storing vote choic no for false and yes for true
-but in application its only showing yes count bar graph, "no" is not plotting that's the single error 
 
 
 #To run the backend command is
